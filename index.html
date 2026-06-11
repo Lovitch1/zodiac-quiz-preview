@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Zodiac.fm · Quiz Funnel v2 (80)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--violet:#6B2BE8;--violet-deep:#3B22D9;--paper:#FBF8F3;--ink:#191320;--muted:#8a8275}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;overflow:hidden}
+  body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);
+    background:radial-gradient(120% 80% at 50% -8%, #FCFAF6 0%, #F1EBE0 52%, #E4DBCD 100%);-webkit-tap-highlight-color:transparent}
+  .seq{position:relative;height:100dvh;width:100%;display:flex;flex-direction:column;align-items:center;padding:14px 18px 10px}
+  .topbar{width:100%;max-width:340px;display:flex;align-items:center;gap:10px;margin-bottom:11px;z-index:6}
+  .back{flex:none;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:22px;line-height:1;color:#2c2530;cursor:pointer;opacity:.65}
+  .back:hover{opacity:1}
+  .pbar{flex:1;height:5px;border-radius:5px;background:rgba(20,16,25,.12);overflow:hidden}
+  .pbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--violet),var(--violet-deep));border-radius:5px;transition:width .35s}
+  .pct{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.04em;flex:none}
+  .restart{position:absolute;top:15px;right:18px;z-index:7;font-size:13px;color:var(--muted);opacity:.5;cursor:pointer}
+
+  .phone-wrap{flex:1;display:flex;align-items:center;justify-content:center;min-height:0;width:100%}
+  .phone{position:relative;width:300px;height:610px;background:linear-gradient(155deg,#26262b,#070708);
+    border-radius:50px;padding:11px;box-shadow:0 2px 4px rgba(60,40,20,.25),0 32px 60px rgba(60,42,24,.3)}
+  .phone::after{content:"";position:absolute;right:-2px;top:150px;width:3px;height:56px;border-radius:3px;background:linear-gradient(#34343a,#0c0c0d)}
+  .island{position:absolute;top:13px;left:50%;transform:translateX(-50%);width:92px;height:28px;background:#000;border-radius:15px;z-index:9}
+  .screen{position:relative;width:100%;height:100%;background:var(--paper);border-radius:40px;overflow:hidden;color:var(--ink)}
+
+  .view{position:absolute;inset:0;display:flex;flex-direction:column;padding:38px 22px 86px;opacity:0;animation:vin .38s cubic-bezier(.22,.61,.36,1) forwards;overflow-y:auto}
+  .view::-webkit-scrollbar{display:none}
+  @keyframes vin{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:translateX(0)}}
+  .brand{font-family:'Fraunces',serif;font-weight:600;font-size:17px;letter-spacing:-.4px;color:#100d18;flex:none;margin-bottom:6px}
+  .brand span{font-weight:400}
+  .orb{position:absolute;left:50%;top:50%;width:220px;height:220px;border-radius:50%;transform:translate(-50%,-50%);
+    background:radial-gradient(circle at 45% 42%, rgba(123,72,255,.32), rgba(123,72,255,0) 62%);filter:blur(4px);z-index:0;animation:orb 7s ease-in-out infinite}
+  @keyframes orb{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-52%) scale(1.08)}}
+  .mid{flex:1;display:flex;flex-direction:column;justify-content:center;position:relative;z-index:2;min-height:0}
+  .mid.top{justify-content:flex-start;padding-top:6px}
+
+  .kick{font-size:9.5px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--violet);margin-bottom:10px}
+  .big{font-family:'Fraunces',serif;font-weight:400;line-height:1.13;letter-spacing:-.01em;font-size:23px;color:#1c1622}
+  .big .it{font-style:italic;color:#3a3340}
+  .sub{font-size:12.5px;line-height:1.5;color:#56505e;margin-top:11px}
+  .q{font-family:'Fraunces',serif;font-style:italic;font-weight:500;font-size:20px;line-height:1.18;color:#1c1622;margin-bottom:15px}
+  .opts{display:flex;flex-direction:column;gap:8px}
+  .opt{background:#fff;border:1px solid rgba(20,16,25,.12);border-radius:13px;padding:12px 14px;font-size:12.5px;font-weight:500;color:#2c2530;text-align:left;cursor:pointer;font-family:'Inter';transition:.14s;line-height:1.3}
+  .opt:hover,.opt.sel{border-color:var(--violet);background:#faf8ff}.opt.sel{box-shadow:0 0 0 1px var(--violet)}
+
+  .pq{font-family:'Fraunces',serif;font-style:italic;font-size:16px;line-height:1.34;color:#241c2e}
+  .pq .qm{color:rgba(107,43,232,.4);font-size:22px}
+  .pwho{display:flex;align-items:center;gap:9px;margin-top:14px}
+  .pav{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#c9b8f5,#8a6fd6);flex:none}
+  .pname{font-size:11.5px;font-weight:700;color:#2c2530}.prole{font-size:10px;color:#9a96a3}
+  .stat{font-family:'Inter';font-weight:800;font-size:50px;letter-spacing:-1.5px;color:var(--violet);line-height:1}
+  .statl{font-size:13px;color:#3a3543;margin-top:8px;line-height:1.4}
+  .src{font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:13px}
+  .seal{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;justify-content:center}
+  .seal span{font-size:10.5px;font-weight:600;color:#2c2530;background:#fff;border:1px solid rgba(20,16,25,.08);border-radius:20px;padding:5px 10px}
+
+  .echo{font-size:11.5px;color:#6a6573;font-style:italic;margin-bottom:11px;line-height:1.45}.echo b{font-style:normal;font-weight:700;color:#2c2530}
+  .verdict{font-family:'Fraunces',serif;font-style:italic;font-size:15px;margin-bottom:8px}
+  .verdict.match{color:var(--violet)}.verdict.miss{color:#c2410c}
+  .rdom{font-size:9.5px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)}
+  .rhz{font-family:'Inter';font-weight:800;font-size:42px;letter-spacing:-1.5px;color:#120e1a;line-height:1;margin:3px 0 2px}.rhz small{font-size:16px;font-weight:600;color:#6a6573}
+  .rband{display:inline-block;background:rgba(107,43,232,.1);color:var(--violet);font-weight:700;font-size:11px;padding:5px 11px;border-radius:20px;margin:6px 0 11px}
+  .rdesc{font-size:12px;line-height:1.5;color:#3a3543;margin-bottom:9px}.rben{font-size:12px;line-height:1.5;color:#1c1622;font-weight:500}
+
+  .field{margin-bottom:10px}.field label{font-size:9.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#8a8275;display:block;margin-bottom:4px}
+  .field input,.field select{width:100%;border:1px solid rgba(20,16,25,.15);border-radius:10px;padding:10px 11px;font-size:12.5px;font-family:'Inter';color:#1c1622;background:#fff}
+  .row3{display:flex;gap:5px}.why{font-size:10px;color:#9a96a3;line-height:1.4;margin-top:3px}
+  .rings{position:relative;width:110px;height:110px;margin:0 auto 18px}
+  .rings i{position:absolute;inset:0;margin:auto;border-radius:50%;border:1.5px solid rgba(107,43,232,.35)}
+  .rings i:nth-child(1){width:100%;height:100%;animation:ring 2.1s ease-out infinite}.rings i:nth-child(2){width:62%;height:62%;animation:ring 2.1s ease-out infinite .5s}
+  .rings i:nth-child(3){width:28%;height:28%;background:radial-gradient(circle,rgba(107,43,232,.5),transparent 70%);border:none}
+  @keyframes ring{0%{transform:scale(.6);opacity:0}40%{opacity:1}100%{transform:scale(1.15);opacity:0}}
+  .player{display:flex;align-items:center;gap:9px;background:#fff;border:1px solid rgba(20,16,25,.08);border-radius:13px;padding:10px 12px;margin:13px 0}
+  .pbtn{width:32px;height:32px;border-radius:50%;background:var(--violet);display:flex;align-items:center;justify-content:center;flex:none}.pbtn svg{width:12px;height:12px;fill:#fff}
+  .wave{flex:1;display:flex;align-items:center;gap:2px;height:20px}.wave i{flex:1;background:rgba(107,43,232,.3);border-radius:2px}
+  .o-price{font-family:'Inter';font-weight:800;font-size:30px;letter-spacing:-1px;color:#120e1a;margin:3px 0}.o-price small{font-size:14px;font-weight:600;color:#6a6573}
+  .o-alt{font-size:11px;color:#6a6573}.guar{font-size:11px;line-height:1.5;color:#3a3543;background:#fff;border:1px solid rgba(20,16,25,.08);border-radius:11px;padding:10px;margin:11px 0}.guar b{color:#1c1622}
+  .stack{font-size:11.5px;line-height:1.7;color:#3a3543}.stack b{color:#1c1622}
+  .cta{display:flex;align-items:center;justify-content:center;background:linear-gradient(150deg,var(--violet),var(--violet-deep));color:#fff;font-weight:700;font-size:14px;border:none;border-radius:40px;padding:13px 24px;box-shadow:0 10px 22px rgba(107,43,232,.4);cursor:pointer;width:100%;margin-top:12px}
+  .skip{display:block;text-align:center;font-size:10.5px;color:#9a96a3;margin-top:10px;cursor:pointer;text-decoration:underline}
+
+  .next{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);z-index:8;display:inline-flex;align-items:center;gap:8px;cursor:pointer;
+    font-family:'Fraunces',serif;font-style:italic;font-weight:500;font-size:14px;color:#fff;white-space:nowrap;
+    background:linear-gradient(150deg,var(--violet),var(--violet-deep));padding:12px 24px;border-radius:30px;border:none;
+    box-shadow:0 8px 20px rgba(107,43,232,.42);animation:np .38s ease .15s both, pul 1.9s ease-in-out 1s infinite}
+  .next .arr{font-style:normal;font-size:17px;animation:nud 1.05s ease-in-out infinite}
+  @keyframes nud{0%,100%{transform:translateX(0)}50%{transform:translateX(5px)}}
+  @keyframes np{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+  @keyframes pul{0%,100%{box-shadow:0 8px 18px rgba(107,43,232,.4)}50%{box-shadow:0 12px 28px rgba(107,43,232,.62)}}
+</style>
+</head>
+<body>
+  <div class="seq" id="seq">
+    <div class="topbar"><div class="back" id="back" title="back">&#8249;</div><div class="pbar"><i id="pf"></i></div><span class="pct" id="pct"></span></div>
+    <div class="restart" id="restart" title="restart">&#8635;</div>
+    <div class="phone-wrap"><div class="phone"><div class="island"></div><div class="screen" id="screen"></div></div></div>
+  </div>
+
+<script>
+(function(){
+  var brand='<div class="brand">zodiac<span>.fm</span></div>';
+  var A={};
+  var HZ={Root:402,'Solar Plexus':523,Throat:668,Crown:812};
+  var DESIGNED={
+    core:{Root:'You know yourself when you feel grounded. Identity clears the moment you return to steady.','Solar Plexus':'You know who you are in motion. Your values get clear through the action you take.',Throat:'You understand yourself by naming it. You know who you are the moment you can voice it.',Crown:'You find yourself in the bigger pattern. Self-recognition comes from the view above.'},
+    love:{Root:'A connection lands when your system steadies and the guard drops on its own.','Solar Plexus':'You bond through shared motion, through what you build and do together.',Throat:'A connection becomes real through what gets said out loud.',Crown:'You read people by how they fit the pattern of your life.'},
+    vitality:{Root:'You come back to yourself through stillness. Recovery is a return to baseline.','Solar Plexus':'You come back by starting. The act of moving restores you.',Throat:'You come back by creating and speaking. Your energy moves through your voice.',Crown:'You come back through perspective. A clear view keeps you steady.'},
+    abundance:{Root:'You know the timing is right when it feels solid and safe in your gut.','Solar Plexus':'You know by momentum, the faster yes. The path clears once you move.',Throat:'You know when you can name the ask. Saying it moves the energy.',Crown:'You know by seeing the shape of the moment before it lands.'}};
+  var BEN={core:'Amplified, who you are stops shifting with the room. You stop becoming whatever it requires.',love:'The guard comes down on its own. The right people find you, the wrong ones drift away.',vitality:'The bracing eases. Rest goes deeper and your energy holds.',abundance:'You move from a clear signal. The right things start arriving instead of being chased.'};
+  // the chart computes a band per domain INDEPENDENT of their guess; match/mismatch emerges by comparison (real branching)
+  var CHART={core:'Throat',love:'Root',vitality:'Solar Plexus',abundance:'Crown'};
+  function chartFor(d){var cb=CHART[d];var a=A[d];return{band:cb,hz:HZ[cb],match:!!(a&&a.band===cb),way:a?a.way:''};}
+  var coreO=[{label:'When I feel anchored and steady',band:'Root',way:'feeling anchored'},{label:'When I’m moving and deciding',band:'Solar Plexus',way:'being in motion'},{label:'When I can put it into words',band:'Throat',way:'naming it'},{label:'When I can see the whole picture',band:'Crown',way:'the wider view'}];
+  var loveO=[{label:'My guard finally drops',band:'Root',way:'your guard dropping'},{label:'We’re building something together',band:'Solar Plexus',way:'building together'},{label:'We’ve said the true thing out loud',band:'Throat',way:'the true thing said'},{label:'I see how they fit my life',band:'Crown',way:'seeing the fit'}];
+  var vitO=[{label:'Stillness and quiet',band:'Root',way:'stillness'},{label:'Starting something',band:'Solar Plexus',way:'starting'},{label:'Creating or speaking',band:'Throat',way:'creating'},{label:'Stepping back to see clearly',band:'Crown',way:'stepping back'}];
+  var abuO=[{label:'It feels solid in my gut',band:'Root',way:'gut certainty'},{label:'I feel the momentum',band:'Solar Plexus',way:'momentum'},{label:'I can name the ask',band:'Throat',way:'naming the ask'},{label:'I can see the timing',band:'Crown',way:'seeing the timing'}];
+
+  function P(q,name,role){return{t:'proof',q:q,name:name,role:role||'',cue:'Next'};}
+  function ST(n,l,src,cue){return{t:'stat',n:n,l:l,src:src,cue:cue||'Next'};}
+  function PN(o){o.t=o.t||'panel';o.cue=o.cue||'Next';return o;}
+
+  var S=[
+   /*1*/ {t:'open',kick:'Personal psychoacoustics',big:'Your birth chart has a <span class="it">sound.</span>',sub:'Four frequencies, yours from the moment you were born. Most people read their chart. You’re about to hear yours.',cue:'Begin'},
+   /*2*/ ST('10,000+','people already tuning in. 4.7 stars.','“The most significant breakthrough in birth chart technology in decades.” Astrology.tv','I’m listening'),
+   /*3*/ {t:'q',domain:'tier',kick:'First, you',q:'How well do you know your chart?',opts:[{label:'Just my sign'},{label:'My big three'},{label:'I go deep: Human Design, Gene Keys, Vedic'},{label:'Honestly, just getting curious'}]},
+   /*4*/ PN({kick:'Here’s the thing',big:'You can know your chart cold and still not get to <span class="it">live it.</span>',sub:'In our study, even the people who knew their chart best said the same thing. Knowing who you are is not the same as being that person in real life.',cue:'That’s me'}),
+   /*5*/ P('This music tickled my soul and reminded me there’s a real connection between vibration, the stars, and sound.','Debra Silverman','Astrologer to Sting & Aaron Rodgers'),
+   /*6*/ {t:'multi',kick:'Sound familiar?',q:'Which of these ring true?',opts:['I know who I am, I just don’t always get to live it','I manage every room I walk into','I catch myself performing and can’t stop','I’m clearer on my own than around people','I’m tired in a way sleep doesn’t touch'],cue:'Next'},
+   /*7*/ PN({quote:1,big:'That’s not a discipline problem.',sub:'You’ve glimpsed the real you, in a clear morning, a retreat, a deep talk. You just never had a reliable way to tune back in. The signal is still there. You lost the station.',cue:'Keep going'}),
+   /*8*/ {t:'self',domain:'core',kick:'Your read · 1 of 4',q:'When do you feel most like yourself?',opts:coreO},
+   /*9*/ P('oh, there you are, Hilary. I found you.','Hilary Wilson','the first time she heard her frequencies'),
+   /*10*/ {t:'binary',kick:'Connection',q:'Do you find yourself managing closeness instead of feeling it?',opts:[{label:'Yes, often'},{label:'Sometimes'},{label:'Rarely'}]},
+   /*11*/ {t:'self',domain:'love',kick:'Your read · 2 of 4',q:'You know a connection is real when…',opts:loveO},
+   /*12*/ ST('90%','said the right people, relationships and opportunities started meeting them.','300 listeners · 9 minutes a day · one year'),
+   /*13*/ {t:'binary',kick:'Energy',q:'Tired in a way sleep doesn’t fix, mind still running?',opts:[{label:'That’s me'},{label:'Now and then'},{label:'Not really'}]},
+   /*14*/ {t:'self',domain:'vitality',kick:'Your read · 3 of 4',q:'You come back to yourself by…',opts:vitO},
+   /*15*/ P('My intuition is sharper, my nervous system softer. It’s the reset that helps me become the version of me I want to bring to the world.','Katie Wells','Founder, Wellness Mama'),
+   /*16*/ {t:'binary',kick:'Timing',q:'Do you hesitate at the exact moment you should move?',opts:[{label:'Yes'},{label:'Sometimes'},{label:'Rarely'}]},
+   /*17*/ {t:'self',domain:'abundance',kick:'Your read · 4 of 4',q:'You know it’s the right move when…',opts:abuO},
+   /*18*/ P('Once I started listening, in particular to the abundance frequency, I landed two new clients that came literally out of the blue.','Hillary Porta','Women’s Executive Coach'),
+   /*19*/ PN({kick:'The quiet cost',big:'Right now you’re the <span class="it">manager</span> of yourself.',sub:'Reading the room, holding the shape, deciding who to be. It works. It’s also exhausting, and it’s not the same as just being you.',cue:'Go on'}),
+   /*20*/ ST('300','people listened for a full year and answered open questions every two weeks. The themes below are their own words, coded after.','Our 52-week study'),
+   /*21*/ {t:'multi',kick:'Be honest',q:'What have you already tried?',opts:['Therapy','Meditation','Astrology / Human Design / Gene Keys','Breathwork, yoga, plant medicine','Reading every book on it']},
+   /*22*/ PN({quote:1,big:'None of it was wasted.',sub:'Every one of those worked on the self your life built. None of them gave you access to the one you were born as. That gap is not a willpower problem.',cue:'So what’s the missing piece?'}),
+   /*23*/ PN({kick:'The part nobody shows you',big:'There are <span class="it">two of you.</span>',sub:'The self experience shaped, and the one encoded at the moment you were born. Every practice you’ve done improved the first. Zodiac is about the second.',cue:'How?'}),
+   /*24*/ PN({kick:'Who’s behind this',big:'A skeptic who tried to <span class="it">debunk it</span> and couldn’t.',sub:'Academic background in hypnosis and NLP, trained with Robert Dilts, eight years in therapy. Astrologers told him what he’d uncovered in those eight years, from his chart alone, without meeting him. He still says he’ll never be a guru.',cue:'Okay'}),
+   /*25*/ PN({kick:'The bridge',big:'Your chart isn’t only information. It’s a set of <span class="it">frequencies.</span>',sub:'Played back, your system recognizes its own note, like a tuning fork. It clears, and it resonates.',cue:'Show me the science'}),
+   /*26*/ P('If you think this sounds hocus-pocus or slightly woo-woo, I get it. I thought so too. Still, it gives me something.','Raf Stevens','recovering skeptic'),
+   /*27*/ PN({kick:'How it works',big:'Clear the static. Turn your <span class="it">own signal</span> up.',sub:'Most practices ask the world to get quieter so you can hear yourself. This turns your signal up instead, until it’s louder than the noise. Over time it holds on its own.',cue:'Next'}),
+   /*28*/ ST('94%','felt more like themselves, more present, less divided between who they are and how they show up.','As-designed cohort, within 3 months'),
+   /*29*/ PN({kick:'A quick seatbelt',big:'“Is this woo?” Fair question.',sub:'The honest floor: music lights up the same reward system as food and connection, every culture on earth makes it, and babies settle to lullabies in languages they’ve never heard. We’re not claiming magic.',cue:'Go on'}),
+   /*30*/ P('Employing vibration and frequency for our well-being is the future. And Zodiac is way ahead of the curve.','Maya Shetreat, MD','Neurologist · Astrologer'),
+   /*31*/ PN({kick:'The seatbelt, cont.',big:'Your brain measurably tracks <span class="it">frequency.</span>',sub:'That part is plain science. What we add is the personal part: which frequencies are yours. We promise orientation, a clearer read on you, not a cure.',cue:'Where’s it from?'}),
+   /*32*/ PN({kick:'The oldest part',big:'Not a new gadget. The <span class="it">oldest practice there is.</span>',sub:'One lineage reads the chart, another holds the sound, the Nada tradition, sound as the root of things. We just made it listenable. We’re selling the oldest thing, not the newest.',cue:'Next'}),
+   /*33*/ P('Zodiac’s frequencies translate your unique imprint into sound, bypassing the mind and speaking directly to the body.','Barbara Ditlow','Human Design · endorsed by Ra Uru Hu'),
+   /*34*/ PN({kick:'What it is, honestly',big:'Orientation, not <span class="it">healing.</span>',sub:'Vitality doesn’t make you vital. It clarifies your own vitality signal, so you recognize what energizes you and what drains you. The insight is the point. What you do with it is yours.',cue:'Next'}),
+   /*35*/ {t:'q',domain:'hope',kick:'If you could live one first',q:'Which would you choose?',opts:[{label:'A steady sense of who I am'},{label:'The right people, with less effort'},{label:'Energy that holds, less bracing'},{label:'Moving on the right things at the right time'}]},
+   /*36*/ PN({kick:'On the other side',big:'You move from a <span class="it">clear signal.</span>',sub:'The guard drops, and people feel the difference before you explain it. The right ones find you. Luck stops being luck. You stopped chasing, and things started arriving.',cue:'I want that'}),
+   /*37*/ P('I feel like ME. I feel like the person I’ve been trying to get back to for so long.','Amber Hedrick','one week in'),
+   /*38*/ PN({kick:'What makes us different',big:'We don’t hand you your <span class="it">sign.</span>',sub:'Sun, moon, rising, that’s just the input. What you get is your bands and your Profile, how you’re built to experience each part of your life. No horoscope or Human Design chart gives you this.',cue:'Next'}),
+   /*39*/ {t:'multi',kick:'Last check',q:'Anything still in the way?',opts:['Not sure it’ll work for me','Sounds a little out there','I don’t know my exact birth time','I’ve been let down before']},
+   /*40*/ PN({quote:1,big:'All fair. Quick answers:',sub:'It works whether or not you believe it. If you don’t know your birth time, noon is fine and we fine-tune it with you. And if it doesn’t land as you, you get your money back. One step left.',cue:'Read my chart'}),
+   /*41*/ {t:'gate'},
+   /*42*/ {t:'calc'},
+   /*43*/ {t:'reveal',domain:'core'},
+   /*44*/ P('When I listened to my core frequency track, my whole nervous system relaxed into recognition. Like coming home to myself.','Rhonda Britten','Emmy winner · Fearless Living'),
+   /*45*/ {t:'reveal',domain:'love'},
+   /*46*/ P('I’m seeing a huge difference in how much more loving I am. I’m more affectionate, more grounded.','Amy Wilcox',''),
+   /*47*/ {t:'reveal',domain:'vitality'},
+   /*48*/ ST('92%','said the body settles, less holding in the shoulders, stress that moves through instead of staying.','As-designed cohort'),
+   /*49*/ {t:'reveal',domain:'abundance'},
+   /*50*/ P('From the very first week, real shifts. Week one I was offered a dream position. By week three, insights flowed daily.','Hilary DiMassimo',''),
+   /*51*/ {t:'profile'},
+   /*52*/ PN({kick:'Yours specifically',big:'Your exact combination is <span class="it">rare.</span>',sub:'Most people cluster in a few profiles. The way your four land together is its own pattern, and now you have language for it that nobody handed you before.',cue:'What do I do with it?'}),
+   /*53*/ P('From the first tone in my ears, it’s as if my soul comes alive. I am finally whole.','Ellen Grimaldi',''),
+   /*54*/ {t:'benefits'},
+   /*55*/ ST('91%','reported sharper instincts, trusting their own first read instead of talking themselves out of it.','As-designed cohort'),
+   /*56*/ PN({kick:'Where it goes',big:'Eventually it stops being about <span class="it">you.</span>',sub:'Once you’re naturally yourself, you stop spending energy managing it. You get capacity back, for the people and the work that are actually yours. By six months, most start turning outward.',cue:'Next'}),
+   /*57*/ P('Quietly, everything in my life responds. I’m finally feeling the parts of myself I’ve only ever read about.','Zehra Ashary','Entrepreneur'),
+   /*58*/ {t:'sample'},
+   /*59*/ ST('61 → 81 → 87%','felt a clear shift at month one, then three, then six. It compounds. The old baseline moves.','Across the year'),
+   /*60*/ PN({kick:'Fits your life',big:'Nine minutes. <span class="it">Anywhere.</span>',sub:'Walking, driving, cooking, working. No practice to remember, no posture, no app to babysit. You don’t rearrange your life. The music carries you.',cue:'Next'}),
+   /*61*/ P('Having it on in the background while I work, I slip into flow much easier. Never going to work again without it.','Alex Kikel','trainer to Olympians'),
+   /*62*/ P('Without doing anything but listening, I become a different person. I shift into the version of me I actually want to be.','Joey Vaillancourt','CMO, BiOptimizers'),
+   /*63*/ {t:'endorse',cue:'Next'},
+   /*64*/ ST('98.6%','would recommend it to a friend. 84% of the as-designed cohort called it life-changing.','52-week study'),
+   /*65*/ P('I listened to my core while journaling and went from ranting to writing hopeful and solutions-oriented, in 9 minutes.','Tangie Nadimi','Human Design practitioner'),
+   /*66*/ PN({kick:'What it’s worth',big:'Piece by piece, this would <span class="it">cost a fortune.</span>',sub:'Four personalized frequencies. Your bands and Profile, the read nobody else gives. The full sound library. A single reading runs more than a year of this.',cue:'Next',stack:1}),
+   /*67*/ PN({kick:'Why now',big:'Founding rate, <span class="it">locked for life.</span>',sub:'Zodiac is bootstrapped, funded by people like you, not investors. As we add more music and features, the price goes up. Yours never does, as long as you stay.',cue:'Next'}),
+   /*68*/ P('Within 45 days I had nearly 40 paying members in a community I didn’t even know I was going to build.','Jennifer K. Hill','Founder, Optimatch'),
+   /*69*/ PN({kick:'No risk',big:'If it doesn’t land as <span class="it">you</span>, full refund.',sub:'90 days, no hoops, you just ask. We’d rather you try it for real than wonder.',cue:'Next'}),
+   /*70*/ PN({kick:'Honest expectations',big:'This is knowing, then <span class="it">living.</span>',sub:'Most don’t notice much week one. Around a month it shows, to you and to others. Around three months it gets real. It’s not a quick high. It’s the realest version of you, on a slow build.',cue:'Next'}),
+   /*71*/ P('I’ve tried Holosync, Headspace, Insight Timer, the Tapping Solution. Nothing as profoundly transformative as this.','Paul Tribe','Addictions counselor'),
+   /*72*/ ST('84%','of the as-designed cohort called it life-changing. Nine minutes a day, balanced across the four.','The headline number'),
+   /*73*/ P('This is the only sound healing made just for me. It fast-tracked clarity in my relationship. That foggy feeling was gone.','Kate Waring',''),
+   /*74*/ {t:'slider',kick:'Be honest',q:'How ready are you to meet the real you?',lo:'Curious',hi:'All in'},
+   /*75*/ P('I’ve received multiple unexpected, very lucrative opportunities since I began tuning in.','Leanne Ely','Best-selling author'),
+   /*76*/ {t:'offer'},
+   /*77*/ PN({kick:'The fork',big:'Hear yourself, or keep <span class="it">managing yourself.</span>',sub:'Founding rate is open now. The cost isn’t the price. It’s another year as the version of you the world built.',cue:'Hear my frequencies'}),
+   /*78*/ P('I can literally feel the shift in my body when I hit play. Like a sonic blueprint of who I am, on repeat.','Todd Shipman','Wellness leader'),
+   /*79*/ PN({kick:'Last word',big:'You came to <span class="it">hear yourself.</span>',sub:'Your four frequencies are tuned and waiting. Founding rate, full refund if it doesn’t land. The only question left is whether you press play.',cue:'Hear my frequencies'}),
+   /*80*/ {t:'downsell'}
+  ];
+
+  var idx=0,last=S.length-1,calcTimer=null,seq=0;
+  var screen=document.getElementById('screen'),pf=document.getElementById('pf'),pct=document.getElementById('pct');
+  function ease(p){p=Math.max(0,Math.min(1,p));return 1-Math.pow(1-p,3);}
+  function countUp(el,t,my){var t0=null;function s(ts){if(my!==seq)return;if(t0===null)t0=ts;var p=(ts-t0)/1200;el.textContent=Math.round(t*ease(p));if(p<1)requestAnimationFrame(s);else el.textContent=t;}requestAnimationFrame(s);}
+  function nextBtn(label){return '<div class="next" data-next>'+(label||'Next')+'<span class="arr">&rsaquo;</span></div>';}
+  function whoBlock(name,role){return '<div class="pwho"><div class="pav"></div><div><div class="pname">'+name+'</div>'+(role?'<div class="prole">'+role+'</div>':'')+'</div></div>';}
+
+  function render(){
+    var s=S[idx];seq++;var my=seq;if(calcTimer){clearTimeout(calcTimer);calcTimer=null;}
+    pf.style.width=Math.round((idx)/last*100)+'%';pct.textContent=(idx+1)+' / '+(last+1);
+    document.getElementById('back').style.visibility=idx>0?'visible':'hidden';
+    var h='',btn='';
+    if(s.t==='open'){h='<div class="view">'+brand+'<div class="orb"></div><div class="mid"><div class="kick">'+s.kick+'</div><div class="big">'+s.big+'</div><div class="sub">'+s.sub+'</div></div></div>';btn=nextBtn(s.cue);}
+    else if(s.t==='q'||s.t==='self'||s.t==='binary'){var o='';s.opts.forEach(function(op,i){o+='<button class="opt" data-i="'+i+'">'+op.label+'</button>';});
+      h='<div class="view">'+brand+'<div class="mid top"><div class="kick">'+s.kick+'</div><div class="q">'+s.q+'</div><div class="opts">'+o+'</div></div></div>';}
+    else if(s.t==='multi'){var o2='';s.opts.forEach(function(op,i){o2+='<button class="opt" data-m="'+i+'">'+op+'</button>';});
+      h='<div class="view">'+brand+'<div class="mid top"><div class="kick">'+s.kick+'</div><div class="q">'+s.q+'</div><div class="opts">'+o2+'</div></div></div>';btn=nextBtn(s.cue);}
+    else if(s.t==='slider'){h='<div class="view">'+brand+'<div class="mid"><div class="kick">'+s.kick+'</div><div class="q">'+s.q+'</div>'+
+      '<input type="range" min="1" max="10" value="7" style="width:100%;accent-color:var(--violet)"><div style="display:flex;justify-content:space-between;font-size:10.5px;color:#9a96a3;margin-top:4px"><span>'+s.lo+'</span><span>'+s.hi+'</span></div></div></div>';btn=nextBtn('Next');}
+    else if(s.t==='panel'){h='<div class="view">'+brand+'<div class="orb"></div><div class="mid" style="text-align:center;align-items:center">'+
+      (s.quote?'<div style="font-family:Fraunces;font-size:24px;color:rgba(107,43,232,.4);line-height:.4;height:18px;margin-bottom:6px">”</div>':'')+
+      (s.kick?'<div class="kick">'+s.kick+'</div>':'')+'<div class="big">'+s.big+'</div><div class="sub">'+s.sub+'</div>'+
+      (s.stack?'<div class="stack" style="margin-top:12px;text-align:left">Your 4 frequencies <b>$297</b><br>Your bands + Profile <b>$197</b><br>The full library, 28 tracks <b>$197</b><br>Founding price-lock <b>priceless</b></div>':'')+
+      '</div></div>';btn=nextBtn(s.cue);}
+    else if(s.t==='stat'){h='<div class="view">'+brand+'<div class="orb"></div><div class="mid" style="text-align:center;align-items:center"><div class="stat">'+s.n+'</div><div class="statl">'+s.l+'</div><div class="src">'+s.src+'</div></div></div>';btn=nextBtn(s.cue);}
+    else if(s.t==='proof'){h='<div class="view">'+brand+'<div class="mid"><div class="pq"><span class="qm">“</span>'+s.q+'”</div>'+whoBlock(s.name,s.role)+'</div></div>';btn=nextBtn(s.cue);}
+    else if(s.t==='endorse'){h='<div class="view">'+brand+'<div class="mid" style="text-align:center;align-items:center"><div class="kick">Endorsed by</div><div class="big" style="font-size:20px">The people who would know <span class="it">better.</span></div>'+
+      '<div class="seal"><span>Debra Silverman</span><span>Maya Shetreat, MD</span><span>Barbara Ditlow</span><span>Rhonda Britten</span><span>Katie Wells</span><span>Dr. Pedram Shojai</span></div></div></div>';btn=nextBtn(s.cue);}
+    else if(s.t==='gate'){h='<div class="view">'+brand+'<div class="mid top"><div class="kick">The reading</div><div class="q" style="margin-bottom:13px">The moment you were born.</div>'+
+      '<div class="field"><label>Birth date</label><div class="row3"><select><option>Month</option></select><select><option>Day</option></select><select><option>Year</option></select></div></div>'+
+      '<div class="field"><label>Birth time</label><input value="12:00 PM"><div class="why">Don’t know it? Use noon. We fine-tune it with you later.</div></div>'+
+      '<div class="field"><label>Birth place</label><input placeholder="City, country"></div>'+
+      '<div class="field"><label>Where to send your reading</label><input placeholder="you@email.com"></div></div></div>';btn=nextBtn('Tune my frequencies');}
+    else if(s.t==='calc'){h='<div class="view">'+brand+'<div class="mid"><div class="rings"><i></i><i></i><i></i></div><div class="q" style="text-align:center;font-size:15px">Tuning your four frequencies…</div><div class="sub" id="cq" style="text-align:center"></div></div></div>';
+      screen.innerHTML=h;var qs=['“Within minutes, my system took an exhale.”','“The only sound healing made just for me.”','“It’s as if I came alive.”'],qi=0,cq=document.getElementById('cq');cq.textContent=qs[0];
+      var rot=setInterval(function(){if(my!==seq){clearInterval(rot);return;}qi=(qi+1)%qs.length;cq.textContent=qs[qi];},1300);
+      calcTimer=setTimeout(function(){if(my===seq)go(idx+1);},4400);return;}
+    else if(s.t==='reveal'){var c=chartFor(s.domain),a=A[s.domain]||{way:''};
+      var lab={core:'Core · Identity',love:'Love · Connection',vitality:'Vitality · Energy',abundance:'Abundance · Timing'}[s.domain];
+      var verd=c.match?'<div class="verdict match">Your chart agrees.</div>':'<div class="verdict miss">Here’s the surprise.</div>';
+      var echo=c.match?'You said you find it through <b>'+a.way+'</b>.':'You reach for it through <b>'+(a.way||'one way')+'</b>. Your chart is built another way.';
+      var tail=c.match?'':' That gap is often why it has felt like forcing.';
+      h='<div class="view">'+brand+'<div class="orb"></div><div class="mid"><div class="echo">'+echo+'</div>'+verd+
+        '<div class="rdom">'+lab+'</div><div class="rhz"><span id="hz">0</span><small>hz</small></div><div class="rband">'+c.band+' band</div>'+
+        '<div class="rdesc">'+DESIGNED[s.domain][c.band]+tail+'</div><div class="rben">'+BEN[s.domain]+'</div></div></div>';
+      var nl={core:'And Love?',love:'And Vitality?',vitality:'And Abundance?',abundance:'See it all together'}[s.domain];
+      screen.innerHTML=h+nextBtn(nl);countUp(document.getElementById('hz'),c.hz,my);bind();return;}
+    else if(s.t==='profile'){var ha=(A.core&&A.core.band)||'Throat',hr=(A.vitality&&A.vitality.band)||'Solar Plexus';
+      h='<div class="view">'+brand+'<div class="orb"></div><div class="mid"><div class="kick">Your profile</div><div class="big" style="font-size:20px;margin-bottom:10px">No horoscope hands you <span class="it">this.</span></div>'+
+      '<div class="sub" style="margin-top:0">How you <b style="color:var(--violet)">are</b> runs through your '+ha+' band.<br>How you <b style="color:var(--violet)">recharge</b> runs through your '+hr+' band.<br>Your four together are your Profile, the way you’re built to move through your life.</div></div></div>';btn=nextBtn('What do I do with it?');}
+    else if(s.t==='benefits'){h='<div class="view">'+brand+'<div class="mid"><div class="kick">At your fingertips</div><div class="big" style="font-size:20px">Your designed self, <span class="it">guiding you.</span></div>'+
+      '<div class="sub">The right people, with less effort. Timing that stops being luck. Energy that holds. Living as yourself instead of managing yourself, and the quiet confidence that comes with it.</div></div></div>';btn=nextBtn('Hear it');}
+    else if(s.t==='sample'){h='<div class="view">'+brand+'<div class="mid"><div class="kick">A taste</div><div class="big" style="font-size:20px">Hear a sample of your <span class="it">Core.</span></div>'+
+      '<div class="player"><span class="pbtn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><span class="wave">'+(function(){var x='';[8,13,17,10,15,9,14,18,10,13,7,16,11,9,15,10,17,8,13,10].forEach(function(v){x+='<i style="height:'+v+'px"></i>';});return x;})()+'</span></div>'+
+      '<div class="sub" style="margin-top:0">This is one of your four. The full set, balanced, is where the real shift lives.</div></div></div>';btn=nextBtn('Show me the full set');}
+    else if(s.t==='offer'){h='<div class="view">'+brand+'<div class="mid top"><div class="kick">Founding membership</div><div class="big" style="font-size:19px;margin-bottom:8px">Your four frequencies, the full library, <span class="it">yours.</span></div>'+
+      '<div class="o-price">$110<small>/year</small></div><div class="o-alt">or $17.50/month · founding rate, locked for as long as you stay</div>'+
+      '<div class="sub" style="margin-top:9px">20 tracks under 9 minutes, 4 meditations, 4 sleep tracks. Each one carries one of your frequencies. Less per month than the last astrology book you bought.</div>'+
+      '<div class="guar"><b>If it doesn’t land as you, full refund.</b> 90 days, no hoops. You just ask.</div>'+
+      '<button class="cta">Hear my frequencies</button><span class="skip" data-next>Not right now</span></div></div>';
+      screen.innerHTML=h;bind();bindCta();return;}
+    else if(s.t==='downsell'){h='<div class="view">'+brand+'<div class="orb"></div><div class="mid" style="text-align:center;align-items:center"><div class="kick">Before you go</div><div class="big" style="font-size:20px">Hear one part of <span class="it">yourself.</span></div>'+
+      '<div class="sub">Start with your Core frequency for 7 days. One honest note: a single frequency is not balance, so it’s a taste of one part of you, not the full read. But it is real, and it’s yours.</div><button class="cta">Start with my Core</button></div></div>';
+      screen.innerHTML=h;bindCta();return;}
+    screen.innerHTML=h+btn;bind();
+    if(s.t==='q'||s.t==='self'||s.t==='binary'){screen.querySelectorAll('.opt').forEach(function(b){b.addEventListener('click',function(){var op=s.opts[+b.getAttribute('data-i')];if(s.domain&&op.band)A[s.domain]={band:op.band,way:op.way};go(idx+1);});});}
+    if(s.t==='multi'){screen.querySelectorAll('.opt').forEach(function(b){b.addEventListener('click',function(){b.classList.toggle('sel');});});}
+  }
+  function bind(){screen.querySelectorAll('[data-next]').forEach(function(n){n.addEventListener('click',function(e){e.stopPropagation();go(idx+1);});});}
+  function bindCta(){var c=screen.querySelector('.cta');if(c)c.addEventListener('click',function(e){e.stopPropagation();c.textContent='→ checkout opens here';});}
+  function go(n){if(n<0)n=0;if(n>last)return;idx=n;render();}
+  document.getElementById('restart').addEventListener('click',function(){A={};go(0);});
+  document.getElementById('back').addEventListener('click',function(){go(idx-1);});
+  var _q=new URLSearchParams(location.search);if(_q.has('scene'))idx=Math.min(last,Math.max(0,parseInt(_q.get('scene'),10)||0));
+  render();
+})();
+</script>
+</body>
+</html>
