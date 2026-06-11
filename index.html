@@ -60,10 +60,20 @@
   .seal{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;justify-content:center}
   .seal span{font-size:10.5px;font-weight:600;color:#2c2530;background:#fff;border:1px solid rgba(20,16,25,.08);border-radius:20px;padding:5px 10px}
 
-  .echo{font-size:11.5px;color:#6a6573;font-style:italic;margin-bottom:11px;line-height:1.45}.echo b{font-style:normal;font-weight:700;color:#2c2530}
-  .verdict{font-family:'Fraunces',serif;font-style:italic;font-size:15px;margin-bottom:8px}
-  .verdict.match{color:var(--violet)}.verdict.miss{color:#c2410c}
-  .rdom{font-size:9.5px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)}
+  .rdom{font-size:9.5px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:9px}
+  .rbadge{display:inline-block;font-weight:800;font-size:12px;padding:6px 13px;border-radius:20px;margin-bottom:12px}
+  .rbadge.match{background:rgba(107,43,232,.12);color:var(--violet)}
+  .rbadge.miss{background:#fde7d3;color:#c2410c}
+  .rcmp1{font-size:12px;color:#3a3543;margin-bottom:12px;line-height:1.5}.rcmp1 b{color:var(--violet)}
+  .rcmp{display:flex;align-items:stretch;gap:7px;margin-bottom:13px}
+  .rcmp .rc{flex:1;background:#fff;border:1px solid rgba(20,16,25,.1);border-radius:11px;padding:9px 8px;text-align:center}
+  .rcmp .rc span{display:block;font-size:8.5px;letter-spacing:.06em;text-transform:uppercase;color:#9a96a3;margin-bottom:3px}
+  .rcmp .rc b{font-size:13px;color:#6a6573}
+  .rcmp .rc.on{border-color:#f59e0b;background:#fff7ed}.rcmp .rc.on b{color:#c2410c}
+  .rcx{align-self:center;font-size:10px;color:#9a96a3;font-weight:700}
+  .rnote{font-size:12px;line-height:1.5;margin:0 0 10px}.rnote b{font-weight:700}
+  .rnote.miss{color:#9a3412;background:#fff7ed;border-left:3px solid #f59e0b;padding:9px 11px;border-radius:0 8px 8px 0}
+  .rnote.match{color:#3a3543}
   .rhz{font-family:'Inter';font-weight:800;font-size:42px;letter-spacing:-1.5px;color:#120e1a;line-height:1;margin:3px 0 2px}.rhz small{font-size:16px;font-weight:600;color:#6a6573}
   .rband{display:inline-block;background:rgba(107,43,232,.1);color:var(--violet);font-weight:700;font-size:11px;padding:5px 11px;border-radius:20px;margin:6px 0 11px}
   .rdesc{font-size:12px;line-height:1.5;color:#3a3543;margin-bottom:9px}.rben{font-size:12px;line-height:1.5;color:#1c1622;font-weight:500}
@@ -113,9 +123,14 @@
     vitality:{Root:'You come back to yourself through stillness. Recovery is a return to baseline.','Solar Plexus':'You come back by starting. The act of moving restores you.',Throat:'You come back by creating and speaking. Your energy moves through your voice.',Crown:'You come back through perspective. A clear view keeps you steady.'},
     abundance:{Root:'You know the timing is right when it feels solid and safe in your gut.','Solar Plexus':'You know by momentum, the faster yes. The path clears once you move.',Throat:'You know when you can name the ask. Saying it moves the energy.',Crown:'You know by seeing the shape of the moment before it lands.'}};
   var BEN={core:'Amplified, who you are stops shifting with the room. You stop becoming whatever it requires.',love:'The guard comes down on its own. The right people find you, the wrong ones drift away.',vitality:'The bracing eases. Rest goes deeper and your energy holds.',abundance:'You move from a clear signal. The right things start arriving instead of being chased.'};
-  // the chart computes a band per domain INDEPENDENT of their guess; match/mismatch emerges by comparison (real branching)
-  var CHART={core:'Throat',love:'Root',vitality:'Solar Plexus',abundance:'Crown'};
-  function chartFor(d){var cb=CHART[d];var a=A[d];return{band:cb,hz:HZ[cb],match:!!(a&&a.band===cb),way:a?a.way:''};}
+  // DEMO branching (real version: the chart calc returns the band from birth data).
+  // Core & Vitality confirm their guess (match). Love & Abundance reveal the opposite band (the surprise).
+  // The result band DEPENDS on their answer, so every reveal genuinely changes with how they answered.
+  var CONFIRM={core:true,love:false,vitality:true,abundance:false};
+  var OPP={'Solar Plexus':'Root',Root:'Solar Plexus',Throat:'Crown',Crown:'Throat'};
+  var RANGE={Root:'250-425','Solar Plexus':'425-600',Throat:'600-775',Crown:'775-950'};
+  function chartFor(d){var a=A[d];var g=a?a.band:'Throat';var cb=CONFIRM[d]?g:OPP[g];
+    return{guess:g,band:cb,hz:HZ[cb],range:RANGE[cb],match:cb===g,way:a?a.way:''};}
   var coreO=[{label:'When I feel anchored and steady',band:'Root',way:'feeling anchored'},{label:'When I’m moving and deciding',band:'Solar Plexus',way:'being in motion'},{label:'When I can put it into words',band:'Throat',way:'naming it'},{label:'When I can see the whole picture',band:'Crown',way:'the wider view'}];
   var loveO=[{label:'My guard finally drops',band:'Root',way:'your guard dropping'},{label:'We’re building something together',band:'Solar Plexus',way:'building together'},{label:'We’ve said the true thing out loud',band:'Throat',way:'the true thing said'},{label:'I see how they fit my life',band:'Crown',way:'seeing the fit'}];
   var vitO=[{label:'Stillness and quiet',band:'Root',way:'stillness'},{label:'Starting something',band:'Solar Plexus',way:'starting'},{label:'Creating or speaking',band:'Throat',way:'creating'},{label:'Stepping back to see clearly',band:'Crown',way:'stepping back'}];
@@ -247,12 +262,19 @@
       calcTimer=setTimeout(function(){if(my===seq)go(idx+1);},4400);return;}
     else if(s.t==='reveal'){var c=chartFor(s.domain),a=A[s.domain]||{way:''};
       var lab={core:'Core · Identity',love:'Love · Connection',vitality:'Vitality · Energy',abundance:'Abundance · Timing'}[s.domain];
-      var verd=c.match?'<div class="verdict match">Your chart agrees.</div>':'<div class="verdict miss">Here’s the surprise.</div>';
-      var echo=c.match?'You said you find it through <b>'+a.way+'</b>.':'You reach for it through <b>'+(a.way||'one way')+'</b>. Your chart is built another way.';
-      var tail=c.match?'':' That gap is often why it has felt like forcing.';
-      h='<div class="view">'+brand+'<div class="orb"></div><div class="mid"><div class="echo">'+echo+'</div>'+verd+
-        '<div class="rdom">'+lab+'</div><div class="rhz"><span id="hz">0</span><small>hz</small></div><div class="rband">'+c.band+' band</div>'+
-        '<div class="rdesc">'+DESIGNED[s.domain][c.band]+tail+'</div><div class="rben">'+BEN[s.domain]+'</div></div></div>';
+      var badge=c.match?'<div class="rbadge match">&#10003; You called this one</div>':'<div class="rbadge miss">&#8623; Plot twist</div>';
+      var compare=c.match
+        ? '<div class="rcmp1">You guessed <b>'+c.guess+'</b>, and your chart says the same.</div>'
+        : '<div class="rcmp"><div class="rc"><span>You guessed</span><b>'+c.guess+'</b></div><div class="rcx">but</div><div class="rc on"><span>You’re built for</span><b>'+c.band+'</b></div></div>';
+      var note=c.match
+        ? 'You already knew yourself here.'
+        : 'You reach for it through <b>'+(a.way||'one way')+'</b>. You’re actually wired the other way. That gap is often exactly why this part of life has felt like forcing.';
+      h='<div class="view">'+brand+'<div class="orb"></div><div class="mid">'+
+        '<div class="rdom">'+lab+'</div>'+badge+compare+
+        '<div class="rhz"><span id="hz">0</span><small>hz</small></div><div class="rband">'+c.band+' band · '+c.range+' Hz</div>'+
+        '<div class="rdesc">'+DESIGNED[s.domain][c.band]+'</div>'+
+        '<div class="rnote '+(c.match?'match':'miss')+'">'+note+'</div>'+
+        '<div class="rben">'+BEN[s.domain]+'</div></div></div>';
       var nl={core:'And Love?',love:'And Vitality?',vitality:'And Abundance?',abundance:'See it all together'}[s.domain];
       screen.innerHTML=h+nextBtn(nl);countUp(document.getElementById('hz'),c.hz,my);bind();return;}
     else if(s.t==='profile'){var ha=(A.core&&A.core.band)||'Throat',hr=(A.vitality&&A.vitality.band)||'Solar Plexus';
